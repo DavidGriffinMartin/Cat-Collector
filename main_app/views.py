@@ -31,35 +31,40 @@ def cats_index(request):
 
 def cats_detail(request, cat_id):
     cat = Cat.objects.get(id=cat_id)
+    # Get the toys the cat doesn't have
+    toys_cat_doesnt_have = Toy.objects.exclude(
+        id__in=cat.toys.all().values_list('id'))
     feeding_form = FeedingForm()
     return render(request, 'cats/detail.html', {
-        # include the cat and feeding_form in the context
-        'cat': cat, 'feeding_form': feeding_form
+        'cat': cat, 'feeding_form': feeding_form,
+        # Add the toys to be displayed
+        'toys': toys_cat_doesnt_have
     })
 
 
 def add_feeding(request, cat_id):
-    # create the ModelForm using the data in request.POST
     form = FeedingForm(request.POST)
-    # validate the form
     if form.is_valid():
-        # don't save the form to the db until it
-        # has the cat_id assigned
         new_feeding = form.save(commit=False)
         new_feeding.cat_id = cat_id
         new_feeding.save()
     return redirect('detail', cat_id=cat_id)
 
 
+def assoc_toy(request, cat_id, toy_id):
+    # Note that you can pass a toy's id instead of the whole object
+    Cat.objects.get(id=cat_id).toys.add(toy_id)
+    return redirect('detail', cat_id=cat_id)
+
+
 class CatCreate(CreateView):
     model = Cat
-    fields = '__all__'
+    fields = ['name', 'breed', 'description', 'age' ]
     success_url = '/cats/'
 
 
 class CatUpdate(UpdateView):
     model = Cat
-    # Let's disallow the renaming of a cat by excluding the name field!
     fields = ['breed', 'description', 'age']
 
 

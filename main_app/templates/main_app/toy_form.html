@@ -1,8 +1,11 @@
-{% extends 'base.html' %} {% block content %} {% if object %}
+{% extends 'base.html' %} {% block content %}
+
+{% if object %}
 <h1>Update {{ object.name }}</h1>
 {% else %}
 <h1>Add Toy</h1>
 {% endif %}
+<hr />
 
 <form action="" method="post">
   {% csrf_token %}
