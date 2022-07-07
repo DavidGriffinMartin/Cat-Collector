@@ -15,13 +15,9 @@ footer {
 }
 
 .datepicker-date-display {
-  background-color: red;
+  background-color: purple;
 }
 
-.datepicker-container.modal-content {
-  background-color: red;
-}
-
-.picker__box {
-  background-color: red;
+.datepicker-cancel, .datepicker-done, .datepicker-table {
+  color: #2196F3;
 }
