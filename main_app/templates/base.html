@@ -21,26 +21,30 @@
   <body>
     <header class="navbar-fixed">
       <nav>
-        <div class="nav-wrapper">
+        <div class="nav-wrapper blue">
           <ul>
             <li>
               <a href="/" class="left brand-logo">&nbsp;&nbsp;CatCollector</a>
             </li>
           </ul>
           <ul class="right">
+            <!-- changes below -->
             <li><a href="{% url 'about' %}">About</a></li>
-            <li><a href="{% url 'index' %}">View All My Cats</a></li>
-            <li><a href="{% url 'cats_create' %}">Add a Cat</a></li>
-            <li><a href="{% url 'toys_index' %}">View All Toys</a></li>
+            {% if user.is_authenticated %}
             <li><a href="{% url 'toys_create' %}">Add a Toy</a></li>
-            <!-- <li><a href="/login">Log In</a></li>
-            <li><a href="/signup">Sign Up</a></li> -->
+            <li><a href="{% url 'toys_index' %}">View All Toys</a></li>
+            <li><a href="{% url 'cats_create' %}">Add a Cat</a></li>
+            <li><a href="{% url 'index' %}">View All My Cats</a></li>
+            <li><a href="{% url 'logout' %}">Log Out</a></li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Log In</a></li>
+            {% endif %}
           </ul>
         </div>
       </nav>
     </header>
     <main class="container">{% block content %} {% endblock %}</main>
-    <footer class="page-footer">
+    <footer class="page-footer blue">
       <div class="right">
         All Rights Reserved, &copy; 2019 Cat Collector &nbsp;
       </div>
