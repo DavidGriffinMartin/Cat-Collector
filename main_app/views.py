@@ -4,6 +4,8 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Cat, Toy, Photo
 from .forms import FeedingForm
@@ -24,11 +26,13 @@ def about(request):
     return render(request, 'about.html')
 
 
+@login_required
 def cats_index(request):
-    cats = Cat.objects.all()
+    cats = Cat.objects.filter(user=request.user)
     return render(request, 'cats/index.html', {'cats': cats})
 
 
+@login_required
 def cats_detail(request, cat_id):
     cat = Cat.objects.get(id=cat_id)
     toys_cat_doesnt_have = Toy.objects.exclude(
@@ -40,6 +44,7 @@ def cats_detail(request, cat_id):
     })
 
 
+@login_required
 def add_feeding(request, cat_id):
     form = FeedingForm(request.POST)
     if form.is_valid():
@@ -49,11 +54,7 @@ def add_feeding(request, cat_id):
     return redirect('detail', cat_id=cat_id)
 
 
-def assoc_toy(request, cat_id, toy_id):
-    Cat.objects.get(id=cat_id).toys.add(toy_id)
-    return redirect('detail', cat_id=cat_id)
-
-
+@login_required
 def add_photo(request, cat_id):
     photo_file = request.FILES.get('photo-file', None)
     if photo_file:
@@ -67,6 +68,12 @@ def add_photo(request, cat_id):
             photo.save()
         except:
             print('An error occurred uploading file to S3')
+    return redirect('detail', cat_id=cat_id)
+
+
+@login_required
+def assoc_toy(request, cat_id, toy_id):
+    Cat.objects.get(id=cat_id).toys.add(toy_id)
     return redirect('detail', cat_id=cat_id)
 
 
@@ -85,7 +92,7 @@ def signup(request):
     return render(request, 'registration/signup.html', context)
 
 
-class CatCreate(CreateView):
+class CatCreate(LoginRequiredMixin, CreateView):
     model = Cat
     fields = ['name', 'breed', 'description', 'age']
     success_url = '/cats/'
@@ -95,36 +102,36 @@ class CatCreate(CreateView):
         return super().form_valid(form)
 
 
-class CatUpdate(UpdateView):
+class CatUpdate(LoginRequiredMixin, UpdateView):
     model = Cat
     fields = ['breed', 'description', 'age']
 
 
-class CatDelete(DeleteView):
+class CatDelete(LoginRequiredMixin, DeleteView):
     model = Cat
     success_url = '/cats/'
 
 
-class ToyList(ListView):
+class ToyList(LoginRequiredMixin, ListView):
     model = Toy
     template_name = 'toys/index.html'
 
 
-class ToyDetail(DetailView):
+class ToyDetail(LoginRequiredMixin, DetailView):
     model = Toy
     template_name = 'toys/detail.html'
 
 
-class ToyCreate(CreateView):
+class ToyCreate(LoginRequiredMixin, CreateView):
     model = Toy
     fields = ['name', 'color']
 
 
-class ToyUpdate(UpdateView):
+class ToyUpdate(LoginRequiredMixin, UpdateView):
     model = Toy
     fields = ['name', 'color']
 
 
-class ToyDelete(DeleteView):
+class ToyDelete(LoginRequiredMixin, DeleteView):
     model = Toy
     success_url = '/toys/'
