@@ -15,9 +15,15 @@ footer {
 }
 
 .datepicker-date-display {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
-.datepicker-cancel, .datepicker-done, .datepicker-table {
-  color: #2196F3;
+.datepicker-cancel,
+.datepicker-done,
+.datepicker-table {
+  color: #2196f3;
+}
+
+.errorlist {
+  color: red;
 }
